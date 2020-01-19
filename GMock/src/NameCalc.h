@@ -6,7 +6,6 @@
 class NameCalc {
   public:
     virtual uint64_t CalcName(const std::string& iName);
-  private:
 };
 
 #endif

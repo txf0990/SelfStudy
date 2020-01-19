@@ -4,9 +4,11 @@ add_library(NameCalc NameCalc.h NameCalc.cpp)
 add_library(Student Student.h Student.cpp)
 target_link_libraries(Student NameCalc)
 
+add_library(NameCalcStatic NameCalcStatic.h NameCalcStatic.cpp)
+
 add_executable(main main.cpp)
-target_link_libraries(main NameCalc)
 target_link_libraries(main Student)
+target_link_libraries(main NameCalcStatic)
 
 add_executable(NameCalcTest NameCalcTest.cpp)
 target_link_libraries(NameCalcTest gtest_main)
