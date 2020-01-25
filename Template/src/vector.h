@@ -7,10 +7,9 @@ namespace tutorial {
       vector() {
         _array = new T[4];
       }
-      vector(int num, T data = T()) : vector() {
-        if (num > 4) {
-          allocateNew(num);
-        }
+      vector(int num, T data = T()) {
+        _array = new T[num];
+        _cap = num;
         for(int i = 0; i < num; i++) {
           _array[i] = data;
         };
@@ -21,15 +20,19 @@ namespace tutorial {
       }
       typedef T* iterator;
       int size() const;
-      T front() const;
-      T back() const;
+      const T& front() const;
+      T& front();
+      const T& back() const;
+      T& back();
       void push_back(const T& data);
       void pop_back();
       
       iterator begin();
+      const iterator begin() const;
       iterator end();
+      const iterator end() const;
       
-      vector& operator= (const vector<T>& v);
+      vector& operator= (const vector& v);
       T& operator[](int i);
       const T& operator[](int i) const;
 
@@ -37,8 +40,6 @@ namespace tutorial {
       int _size = 0;
       int _cap = 4;
       T* _array;
-
-      void allocateNew(int newSize);
   };
 
   template<typename T> int vector<T>::size()  const{
@@ -51,8 +52,10 @@ namespace tutorial {
     return _array[i];
   }
   template<typename T> vector<T>& vector<T>::operator=(const vector<T>& v) {
-    if (v.size() > _size) {
-      allocateNew(v.size());
+    if (v.size() > _cap) {
+      delete [] _array;
+      _array = new T[v.size()];
+      _cap = v.size();
     }
     for(int i = 0; i < v.size(); i++) {
       _array[i] = v[i];
@@ -61,49 +64,46 @@ namespace tutorial {
 
     return *this;
   }
-  template<typename T> void vector<T>::allocateNew(int newSize) {
-    while (_cap <= newSize) {
-      _cap *= 2;
-    }
-    T* oldArray = _array;
-    _array = new T[_cap];
-    for(int i = 0; i < _size; i++) {
-      _array[i] = oldArray[i];
-    }
-    delete []oldArray;
-  }
 
-  template<typename T> T vector<T>::front() const{
-    if (_size == 0) {
-      cout << "size == 0" << endl; 
-      return T();
-    } else {
-      return _array[0];
-    }
+  template<typename T> const T& vector<T>::front() const{
+    return _array[0];
   }
-
-  template<typename T> T vector<T>::back() const{
-    if (_size == 0) {
-      cout << "size == 0" << endl; 
-      return T();
-    } else {
-      return _array[_size - 1];
-    }
+  template<typename T> T& vector<T>::front(){
+    return _array[0];
+  }
+  template<typename T> const T& vector<T>::back() const{
+    return _array[_size - 1];
+  }
+  template<typename T> T& vector<T>::back() {
+    return _array[_size - 1];
   }
 
   template<typename T> void vector<T>::push_back(const T& data){
-    if (_size == _cap) allocateNew(_size + 1);
+    if (_size == _cap) {
+      T* oldArray = _array;
+      _cap = _size * 2;
+      _array = new int[_cap];
+      for(int i = 0; i < _size; i++) {
+        _array[i] = oldArray[i];
+      }
+      delete [] oldArray;
+    }
     _array[_size] = data;
     _size++;
   }
   template<typename T> void vector<T>::pop_back(){
-    if (_size == 0) {cout << "size == 0" << endl;}
     _size--;
   }
   template<typename T> typename vector<T>::iterator vector<T>::begin(){
     return _array;
   }
+  template<typename T> const typename vector<T>::iterator vector<T>::begin() const{
+    return _array;
+  }
   template<typename T> typename vector<T>::iterator vector<T>::end(){
+    return _array + _size;
+  }
+  template<typename T> const typename vector<T>::iterator vector<T>::end() const{
     return _array + _size;
   }
 }
